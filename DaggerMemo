@@ -1,0 +1,148 @@
+
+Done: rename modules(e.g. JetModule -> AppModule)
+Done: compile and generate DaggerXxxComponent
+Done: ArModule, CartModule, MiscModule, OrderDetailModule, PdpModule, PlpModule, ReferralModule, ReturnsModule is empty. Needed?
+TODO: Inheritance field injection. "inject(this)" in baseclass is not needed in Dagger2: e.g. BaseFragment. Opposite to Dagger 1, where subclass explicit injection is not needed but it was done by reflection.
+COMMENTED: source folder `src/debug` in `misclib` & `baselib`.
+Commented: ZipRestrictionWarningDialogFragment not used except inner interface
+TODO: is "context" that is injected to ReturnsAdapter actually "JetApp"?
+
+* Why Dagger 2:
+   ** Performance(no reflection)
+   ** Explicit Custom Scope
+   ** Clean up various hacks around injections in existing code
+   ** Modern API
+   ** Encapsulation(BaseLibComponent)
+
+* annotation processing in Kotlin module should use
+   kapt instead of apt
+   apply plugin: 'kotlin-kapt'
+
+* component dependency vs sub-component
+
+   ** Component dependencies - Use this when you want to keep two components independent. Exposed dependency objects have to be explicitly declared.
+
+   ** Subcomponents - Use this when you want to keep two components coupled. All dependency objects in main Components are automatically available to subcomponents(because subcomponent is the inner class of base component in generated class)
+        https://proandroiddev.com/dagger-2-component-relationships-custom-scopes-8d7e05e70a37
+
+        But problem with subcomponent across modules: say i want to define a subcomponent for a feature module. that subcomponent interface is defined in baselib along with the singleton Component. when activity in feature module needs field injection, it needs to call subcomponent's method, say called `inject(FeatureActivity)`. But subcomponent lives in baselib and has no visibility into feature module so FeatureActivity can't be resolved
+
+* Optimization
+   ** @Component.Builder & @BindInstance : customize component's default builder(not applicable to our case)
+          https://proandroiddev.com/dagger-2-component-builder-1f2b91237856
+
+   ** @Binds: slightly better performance to @Provides when provided object is straight from provide method's argument(not applicable)
+          https://proandroiddev.com/dagger-2-annotations-binds-contributesandroidinjector-a09e6a57758f
+
+   ** @ActivityScope to survive orientation change, so all dependency components(presenter, repository) can be cached and reused
+
+   ** dagger-android:
+      AndroidInjection.inject(this)
+      *** pros: cut boilerplate code; hide injector from lifecycle components
+      *** cons: support Activity/Fragment/Service/BroadcastReceiver/ContentProvider but have to workaround for View/Dialog; non-trivial setup, especially for modularized project like ours.
+      *** cons: learning curve
+
+      *** @ContributesAndroidInjector(dagger-android): simplify subcomponent
+
+* retain application instance as companion object so it can be accessed anywhere in the app
+
+* custom scope within consumer modules
+
+* Singleton vs un-scoped vs custom scope
+
+* Best practice(cleanup):
+   - @Singleton: e.g. PhaserInterceptor
+   - in favor of constructor injection over field injection. unusual field injections that applied to non-lifecycle objects.
+     Their dependencies should be passed in constructors, either by call-site or by Dagger:
+     Corrected example: CmsModuleAdapter, NewUserPresenter, PurchasedAdapter, CheckoutInitialFlowPresenter, CheckoutLoginPresenter, FinalizeAnonymousPresenter, ChangePasswordPresenter, ZipRestrictionEntryPresenter, ViewShowsPricePresenter
+     Documented example: SmartLock, PaymentManager
+   - in favor of inline annotation over Module's providers: e.g. MonitoringInterceptor
+   - Mixed constructor and field injection: MultiSearchResultsPresenter
+   - cleanup classes don't use any injection: e.g. ViewCarouselProduct, ViewFormCreditCard, BaseRepository, HomeFragment, ViewProductSlimCarouselItem,
+       ViewRowReorderPlp, MissionManager, NestedLandingPageActivity, OrderHistoryActivity, ViewDependentController
+   - missing field injection "inject(this)": LoginCreateAccountActivity
+   - obsolete(unused) classes: e.g. RecentProductCarouselAdapter, ShoppingListActivity/ShoppingListBaseActivity
+   - suspected unused classes: FinalizeAnonymousFragment/FinalizeAnonymousPresenter(because presenter's field injection is never performed)
+   - Dagger objectGraph boilerplate: MyItemBaseActivity
+   - Removed XxxBaseActivity(inconsistent; single inheritance; just deal with objectgraph): ShoppingListBaseActivity
+   - Field inject as early as possible. E.g. Fragment.onAttach() such as CartListFragment, FinalizeAnonymousFragment, ChangePasswordFragment, ReturnsFragment, ReviewReturnFragment, SubmitReturnsFragment
+   - Wrong way of retrieving dependency: AbstractCheckoutFragment:
+      adapterCheckout = ((CartBaseActivity) getActivity()).getCartObjectGraph()
+              .get(CheckoutAdapter.class);
+            => straightforward field injection
+
+   - Inheritance field injection. "inject(this)" in baseclass is not needed in Dagger2, which is opposite to Dagger 1, where subclass explicit injection is not needed but it was done by reflection.
+        So subclass that omitted injection has to do it in Dagger2 explicitly. E.g. CheckoutInitialFlowActivity, DetailsActivity, CalloutAcitivity; PlpBaseActivity(SearchResultsActivity, MultiSearchResultsActivity, SearchFilterActivity)
+   - Makes-no-sense configuration: OrderHistory Fragment/Presenter/Adapter, NewRelicWrapper, PromoBannerRepo, UserStatusManager, ZipRestrictionEntryDialog, ZipRestrictionWarningDialogFragment, PurchasedFragment, ViewReorderFilterDrawer configured in MiscModule;
+   - BaseActivity create mainly to handle cumbersome Dagger1's objectGraph's implicit scoping. No need if single inheritance since Dagger2 setup is simpler, so deleted: OrderDetailBaseActivity
+   - Dagger 1 allows the same provideXxx() in the same module as long as they are annotated with different qualifier annotation, but Dagger2 does NOT allow it: NetworkModuleV2#provideOkHttpClient
+   - Some unused injection fields
+
+* Tips (Dagger2 diff than Dagger1)
+   - If base class is in base module, subclass in feature module, field injections in base class still need to be exposed by baseLibComponent(because base class's instance is within feature modules now);
+     Also, classes that the generated Dagger injectors depend on should also be resolvable in feature module(build.gradle).
+     Error indication: error: compiler message file broken: key=compiler.err.Processor: org.jetbrains.kotlin.kapt3.base.ProcessorWrapper@550c0cf8 arguments={0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}
+     Reference: https://github.com/google/dagger/issues/1263
+     E.g. TabActivity(base class) needs field injection of MParticleTracker & ShowHpBottomNavBarTooltip(BooleanPreference), and
+         feature module's build.gradle: implementation "com.mparticle:android-core:$rootProject.mParticleVersion"
+   - In kotlin, field injection with qualifier uses @field:[Qualifier](e.g. @field.ClientTicket) instead of @[Qualifier]
+   - Empty modules can be removed: ArModule, CartModule, MiscModule, OrderDetailModule, PdpModule, PlpModule, ReferralModule, ReturnsModule
+
+
+Ref:
+https://medium.com/@Zhuinden/that-missing-guide-how-to-use-dagger2-ef116fbea97
+
+https://www.youtube.com/watch?v=plK0zyRLIP8&feature=youtu.be
+
+https://medium.com/mindorks/kotlin-mvp-dagger-2-retrofit-sample-android-application-e6fe3af7acd (Dagger2 section)
+
+@Singleton or custom scope simply means that Dagger will cache the object for the specified scope. When time comes to retrieve it again, it comes out from cache or a new instance.
+
+
+/*** commit message***/
+AND-1925 Dagger 2 Migration
+
+Why Dagger 2:
+  - Performance(no reflection)
+  - Explicit Custom Scope
+  - Clean up various hacks around injections in existing code
+  - Modern API
+  - Encapsulation of modlue internal objects
+
+Decision around "Component Dependency" vs. "Subcomponent"
+  Turned out that with our current gradle module setup, Dagger2's "subcomponent" is impossible because subcomponent is the inner class of parrent component(in generated class), so it needs to be defined in the baselib, which is impossible for feature modules to perform field injection(classes in feature module won't be visible to baselib module).
+  So we have to take the "component dependency" approach.
+
+Other optimization considerations:
+  - @Component.Builder & @BindInstance : customize component's default builder(not applicable to our case)
+  - @Binds: slightly better performance to @Provides when provided object is straight from provide method's argument(not applicable to us)
+  - @ActivityScope to survive orientation change, so all dependency components(presenter, repository) can be cached and reused. Should be considered but not super important due to the fact that we are enforce portrait orientation in most of use cases
+  - dagger-android: AndroidInjection.inject(this)
+     -- pros: cut boilerplate code; hide injector from lifecycle components
+     -- cons: support Activity/Fragment/Service/BroadcastReceiver/ContentProvider but have to workaround for View/Dialog; non-trivial setup, especially for modularized project like ours.
+     -- cons: learning curve
+     -- @ContributesAndroidInjector(dagger-android): applicable to subcomponent(not our case)
+
+Cleanups and misc notes:
+  - Singleton vs un-scoped vs custom scope: many objects(e.g. presenters) were unscoped and probably should be custom scoped. But again, because most of our use cases don't involve orientation change, I kept the behavior the same as before for now.
+  - Should be @Singleton: e.g. PhaserInterceptor
+  - In favor of constructor injection over field injection. I observed the following classes should use constructor injection instead of field injection:
+     CmsModuleAdapter, NewUserPresenter, PurchasedAdapter, CheckoutInitialFlowPresenter, CheckoutLoginPresenter, FinalizeAnonymousPresenter, ChangePasswordPresenter, ZipRestrictionEntryPresenter, ViewShowsPricePresenter, SmartLock, PaymentManager
+  - In favor of inline annotation over Module's providers: e.g. MonitoringInterceptor
+  - Mixed constructor and field injection: MultiSearchResultsPresenter
+  - cleanup classes don't use any injection: e.g. ViewCarouselProduct, ViewFormCreditCard, BaseRepository, HomeFragment, ViewProductSlimCarouselItem, ViewRowReorderPlp, MissionManager, NestedLandingPageActivity, OrderHistoryActivity, ViewDependentController
+  - missing field injection "inject(this)": LoginCreateAccountActivity
+  - obsolete(unused) classes: e.g. RecentProductCarouselAdapter, ShoppingListActivity/ShoppingListBaseActivity
+  - suspected unused classes: FinalizeAnonymousFragment/FinalizeAnonymousPresenter(because presenter's field injection is never performed)
+  - Removed class that only serves as Dagger objectGraph boilerplate: MyItemBaseActivity, ShoppingListBaseActivity, OrderDetailBaseActivity
+  - Field injection should happen as early as possible: CartListFragment, FinalizeAnonymousFragment, ChangePasswordFragment, ReturnsFragment, ReviewReturnFragment, SubmitReturnsFragment
+  - Wrong way of retrieving dependency: AbstractCheckoutFragment:
+      adapterCheckout = ((CartBaseActivity) getActivity()).getCartObjectGraph()
+              .get(CheckoutAdapter.class);
+            => straightforward field injection
+  - Inheritance field injection. "inject(this)" in baseclass is not needed in Dagger2, which is opposite to Dagger 1, where subclass explicit injection is not needed but it was done by reflection.
+        So subclass that omitted injection has to do it in Dagger2 explicitly. E.g. CheckoutInitialFlowActivity, DetailsActivity, CalloutAcitivity; PlpBaseActivity(SearchResultsActivity, MultiSearchResultsActivity, SearchFilterActivity)
+  - Make-no-sense configuration: OrderHistory Fragment/Presenter/Adapter, NewRelicWrapper, PromoBannerRepo, UserStatusManager, ZipRestrictionEntryDialog, ZipRestrictionWarningDialogFragment, PurchasedFragment, ViewReorderFilterDrawer configured in MiscModule;
+  - Dagger 1 allows the same provideXxx() in the same module as long as they are annotated with different qualifier annotation, but Dagger2 does NOT allow it: NetworkModuleV2#provideOkHttpClient
+  - Removed unused injection fields
+

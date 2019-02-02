@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="spike.chen.featurelib">
+    <application>
+        <activity
+          android:name=".FeatureActivity"/>
+    </application>
+</manifest>
