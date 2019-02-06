@@ -2,8 +2,8 @@ package spike.chen.baselib
 
 import dagger.Module
 import dagger.Provides
-import javax.inject.Named
 import javax.inject.Singleton
+import kotlin.random.Random
 
 @Module
 class BaseLibModule(private val app: JetApp) {
@@ -18,5 +18,10 @@ class BaseLibModule(private val app: JetApp) {
   @Singleton
   fun provideDataManager(): DataManager {
     return DataManager("data manager from baselib")
+  }
+
+  @Provides
+  fun provideCountData(): CountData {
+    return CountData(Random.nextInt())
   }
 }
