@@ -5,9 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import kotlinx.android.synthetic.main.activity_base.*
-import spike.chen.baselib.R.id.baseLibButton
-import spike.chen.baselib.R.id.baseLibText
+import kotlinx.android.synthetic.main.calories_row.view.*
+import kotlinx.android.synthetic.main.serving_row.view.*
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -39,6 +40,32 @@ class MainActivity : AppCompatActivity() {
     }
 
     Log.d("main", "${a.countAData} ${b.countBData} ${c.countCData}")
+
+
+    nutritionTable.addView(
+      layoutInflater.inflate(R.layout.serving_row, nutritionTable, false).apply {
+        serving_title.text = "Serving Size"
+        serving_value.text = "1 oz(28g)"
+      }
+    )
+
+    nutritionTable.addView(layoutInflater.inflate(R.layout.divider_thin, nutritionTable, false))
+
+    nutritionTable.addView(
+      layoutInflater.inflate(R.layout.calories_row, nutritionTable, false).apply {
+        calories_label.text = "Calories"
+        calories_value.text = "140"
+        fat_label.text = "Fat"
+        fat_value.text = "70"
+      }
+    )
+
+    allergenTable.addView(
+      layoutInflater.inflate(R.layout.serving_row, nutritionTable, false).apply {
+        serving_title.text = "Allergen"
+        serving_value.text = "Peanut"
+      }
+    )
 
   }
 }

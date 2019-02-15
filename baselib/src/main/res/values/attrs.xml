@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CollapsibleView">
+        <attr format="string" name="title"/>
+        <attr format="dimension" name="titlePaddingStart"/>
+        <attr format="dimension" name="titlePaddingEnd"/>
+        <attr format="boolean" name="startExpanded"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <color name="text_regular">#444444</color>
+    <color name="text_dark">#333333</color>
+    <color name="divider_color">#D2D2D2</color>
+    <color name="divider_alt">#D2D2D2</color>
+    <color name="transparent">#00000000</color>
+    <color name="background">#EFEFEF</color>
+</resources>

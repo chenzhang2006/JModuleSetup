@@ -1,12 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
-    <LinearLayout
+    <spike.chen.baselib.view.CollapsibleView
+      android:id="@+id/nutritionContainer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="top"
       android:orientation="vertical"
-      android:layout_width="wrap_content" android:layout_height="wrap_content"
-      android:layout_centerInParent="true">
+      app:startExpanded="false"
+      app:title="Nutrition"
+      app:titlePaddingEnd="16dp"
+      app:titlePaddingStart="16dp">
+
+        <LinearLayout
+          android:id="@+id/nutritionTable"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingEnd="16dp"
+          android:paddingStart="16dp"/>
+
+    </spike.chen.baselib.view.CollapsibleView>
+
+    <spike.chen.baselib.view.CollapsibleView
+      android:id="@+id/allergenContainer"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/nutritionContainer"
+      android:orientation="vertical"
+      app:startExpanded="false"
+      app:title="Allergen"
+      app:titlePaddingEnd="16dp"
+      app:titlePaddingStart="16dp">
+
+        <LinearLayout
+          android:id="@+id/allergenTable"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingEnd="16dp"
+          android:paddingStart="16dp"/>
+
+    </spike.chen.baselib.view.CollapsibleView>
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content" android:layout_centerInParent="true"
+      android:orientation="vertical">
 
         <TextView
           android:id="@+id/baseLibText"
