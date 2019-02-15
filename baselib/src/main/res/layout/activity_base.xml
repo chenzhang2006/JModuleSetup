@@ -14,17 +14,7 @@
       app:startExpanded="false"
       app:title="Nutrition"
       app:titlePaddingEnd="16dp"
-      app:titlePaddingStart="16dp">
-
-        <LinearLayout
-          android:id="@+id/nutritionTable"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          android:paddingEnd="16dp"
-          android:paddingStart="16dp"/>
-
-    </spike.chen.baselib.view.CollapsibleView>
+      app:titlePaddingStart="16dp"/>
 
     <spike.chen.baselib.view.CollapsibleView
       android:id="@+id/allergenContainer"
@@ -35,17 +25,7 @@
       app:startExpanded="false"
       app:title="Allergen"
       app:titlePaddingEnd="16dp"
-      app:titlePaddingStart="16dp">
-
-        <LinearLayout
-          android:id="@+id/allergenTable"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          android:paddingEnd="16dp"
-          android:paddingStart="16dp"/>
-
-    </spike.chen.baselib.view.CollapsibleView>
+      app:titlePaddingStart="16dp"/>
 
     <LinearLayout
       android:layout_width="wrap_content"

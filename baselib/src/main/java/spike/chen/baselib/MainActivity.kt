@@ -42,17 +42,17 @@ class MainActivity : AppCompatActivity() {
     Log.d("main", "${a.countAData} ${b.countBData} ${c.countCData}")
 
 
-    nutritionTable.addView(
-      layoutInflater.inflate(R.layout.serving_row, nutritionTable, false).apply {
+    nutritionContainer.addView(
+      layoutInflater.inflate(R.layout.serving_row, nutritionContainer, false).apply {
         serving_title.text = "Serving Size"
         serving_value.text = "1 oz(28g)"
       }
     )
 
-    nutritionTable.addView(layoutInflater.inflate(R.layout.divider_thin, nutritionTable, false))
+    nutritionContainer.addView(layoutInflater.inflate(R.layout.divider_thin, nutritionContainer, false))
 
-    nutritionTable.addView(
-      layoutInflater.inflate(R.layout.calories_row, nutritionTable, false).apply {
+    nutritionContainer.addView(
+      layoutInflater.inflate(R.layout.calories_row, nutritionContainer, false).apply {
         calories_label.text = "Calories"
         calories_value.text = "140"
         fat_label.text = "Fat"
@@ -60,8 +60,8 @@ class MainActivity : AppCompatActivity() {
       }
     )
 
-    allergenTable.addView(
-      layoutInflater.inflate(R.layout.serving_row, nutritionTable, false).apply {
+    allergenContainer.addView(
+      layoutInflater.inflate(R.layout.serving_row, allergenContainer, false).apply {
         serving_title.text = "Allergen"
         serving_value.text = "Peanut"
       }
