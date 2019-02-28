@@ -6,40 +6,46 @@
 
     <TextView
       android:id="@+id/calories_label"
-      android:layout_width="100dp"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_weight="3"
       android:layout_gravity="center_vertical"
-      android:layout_marginEnd="22dp"
-      android:textSize="24dp"
+      android:textSize="14sp"
       android:textStyle="bold"
-      tools:text="Calories"/>
+      tools:text="Calories"
+    android:layout_marginStart="32dp"/>
 
     <TextView
       android:id="@+id/calories_value"
-      android:layout_width="wrap_content"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_weight="3"
       android:layout_gravity="center_vertical"
-      android:layout_marginEnd="44dp"
-      android:textSize="24dp"
+      android:gravity="left
+"
+      android:textSize="14sp"
       tools:text="140"/>
 
     <TextView
       android:id="@+id/fat_label"
-      android:layout_width="100dp"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_weight="3"
       android:layout_gravity="center_vertical"
-      android:layout_marginEnd="22dp"
-      android:textSize="24dp"
+      android:textSize="14sp"
       android:textStyle="bold"
-      tools:text="Fat"/>
+      tools:text="Calories from Fat"/>
 
     <TextView
       android:id="@+id/fat_value"
-      android:layout_width="wrap_content"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_weight="3"
       android:layout_gravity="center_vertical"
-      android:textSize="24dp"
-      tools:text="60"/>
+      android:gravity="center"
+      android:textSize="14sp"
+      tools:text="60"
+    android:layout_marginEnd="32dp"/>
 
 
 </LinearLayout>

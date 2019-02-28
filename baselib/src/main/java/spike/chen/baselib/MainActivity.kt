@@ -55,9 +55,13 @@ class MainActivity : AppCompatActivity() {
       layoutInflater.inflate(R.layout.calories_row, nutritionContainer, false).apply {
         calories_label.text = "Calories"
         calories_value.text = "140"
-        fat_label.text = "Fat"
+        fat_label.text = "Calories from Fat"
         fat_value.text = "70"
       }
+    )
+
+    nutritionContainer.addView(
+      layoutInflater.inflate(R.layout.daily_value_header, nutritionContainer, false)
     )
 
     allergenContainer.addView(
