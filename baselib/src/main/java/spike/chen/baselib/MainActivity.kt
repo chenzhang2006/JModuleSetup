@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.content.res.AppCompatResources
 import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_base.*
@@ -70,6 +71,13 @@ class MainActivity : AppCompatActivity() {
         serving_value.text = "Peanut"
       }
     )
+
+
+    val icon = AppCompatResources.getDrawable(this, R.drawable.ic_order_history).apply { this?.level = 1 }
+
+    textWithIcon.setCompoundDrawablesWithIntrinsicBounds(
+      icon, null,
+      null, null)
 
   }
 }

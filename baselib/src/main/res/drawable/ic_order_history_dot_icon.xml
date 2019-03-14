@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+      android:drawable="@drawable/ic_order_history_icon" android:width="24dp" android:height="24dp"/>
+    <item
+      android:bottom="20dp"
+      android:drawable="@drawable/red_dot"
+      android:left="16dp"
+      android:right="0dp"
+      android:top="0dp"
+    android:width="8dp"
+    android:height="8dp"/>
+</layer-list>
